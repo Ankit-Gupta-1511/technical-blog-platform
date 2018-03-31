@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email']}));
 
+// /google/callback is used in google+ api as callback after successfull authentication
 router.get('/google/callback', passport.authenticate('google', {failureRedirect: '/auth/google'}), (req, res) => {
     res.redirect('/auth/verify');
 });
@@ -11,7 +12,7 @@ router.get('/google/callback', passport.authenticate('google', {failureRedirect:
 router.get('/verify', (req, res) => {
     if(req.user)
     {
-        res.send("author verified")
+        res.redirect('/dashboard')
     }
     else
     {

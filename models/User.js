@@ -12,6 +12,9 @@ const AuthorSchema = new Schema({
         type: String,
         required: true
     },
+    firstName: {
+        type: String
+    },
     lastName: {
         type: String
     },
