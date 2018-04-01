@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -26,7 +27,7 @@ require('./config/passport')(passport);
 const auth = require('./routes/auth');
 const index = require('./routes/index');
 const dashboard = require('./routes/dashboard');
-
+const blogApi = require('./routes/blog-api');
 // load keys
 
 const keys = require('./config/keys');
@@ -59,6 +60,7 @@ app.use(cookieParser());
 
 // body parser
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -70,6 +72,9 @@ app.use((req, res, next) => {
         next();
 });
 
+// set static
+app.use(express.static(path.join(__dirname, 'static')));
+
 //////////////////////////
 
 // using routes
@@ -79,6 +84,9 @@ app.use('/auth', auth);
 
 // dashboard routes
 app.use('/dashboard', dashboard);
+
+//blog api routes
+app.use('/post', blogApi);
 
 // index routes
 app.use('/', index);
