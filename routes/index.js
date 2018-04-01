@@ -10,4 +10,9 @@ router.get('/author/login', (req, res)=>{
     res.render('base/login');
 });
 
+// blogs routes
+
+router.get('/blogs/:id', (req, res)=>{
+        res.send("showing blogs");
+});
 module.exports = router;

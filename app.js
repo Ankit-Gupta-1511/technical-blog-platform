@@ -15,6 +15,7 @@ const app = express();
 // load models
 
 require('./models/User');
+require('./models/Blog');
 
 /////////////////////////
 // passport config

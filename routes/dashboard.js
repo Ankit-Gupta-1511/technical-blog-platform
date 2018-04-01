@@ -10,7 +10,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
     });
 });
 
-router.get('/add-blog', (req, res)=>{
+router.get('/add-blog', ensureAuthenticated, (req, res)=>{
     res.render('dashboard/add-blog', {
         layout: 'dashboard-editor',
     });
