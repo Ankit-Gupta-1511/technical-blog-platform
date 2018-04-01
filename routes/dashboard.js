@@ -16,14 +16,5 @@ router.get('/add-blog', (req, res)=>{
     });
 });
 
-router.post('/new-blog', (req, res)=>{
-        
-        var newBlog = {
-            title: req.body.title,
-            body: req.body.body
-        };
-
-        console.log(newBlog);
-});
 
 module.exports = router;
