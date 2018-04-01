@@ -1,144 +1,62 @@
-$(document).ready(function () {
-    var rowID = 1;
-    $(".add-btn").click(function () {
-        rowID++;
-        var row = '<div class="row justified-content-center content-box" id="content-box-' + rowID + '">' +
-            '<div class="col" id="content-' + rowID + '">' +
-            '<div class="input-group mb-3">' +
-            '<div class="input-group-prepend">' +
-            '<label class="input-group-text" for="inputGroupSelec' + rowID + '">Options</label>' +
-            '</div>' +
-            '<select class="custom-select" id="inputGroupSelect' + rowID + '">' +
-            '<option selected>Content Type</option>' +
-            '<option value="subtitle">Sub Title</option>'+
-            '<option value="paragraph">Paragraph</option>' +
-            '<option value="image">Image</option>' +
-            '<option value="video">Video</option>' +
-            '<option value="formula">Formula</option>' +
-            '<option value="code">Code Snippet</option>' +
-            '<option value="quote">Quote</option>' +
-            '</select>' +
-            '</div>' +
-            '<div class="input-group" id="content-body-' + rowID + '">' +
+$(document).ready(
+    function(){
+        var toolbarOptions = [
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            ['blockquote', 'code-block'],
+          
+            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+            [{ 'direction': 'rtl' }],                         // text direction
+          
+            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+          
+            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+            [{ 'font': [] }],
+            [{ 'align': [] }],
 
-            '</div>' +
-            '</div>' +
-            '</div>';
+            ['formula']
+          
+                                
+        ];
 
-        $('#main-content-container').append(row);
+        var options = {
+            debug: 'info',
+            bounds: document.getElementById('quill-editor'),
+            modules: {
+                formula: true,
+                syntax: true,
+                toolbar: '#quill-toolbar'
+            },
+            placeholder: 'Write your Blog here...',
+            readOnly: false,
+            theme: 'snow'
+          };
 
-        $(".custom-select").each(function () {
-            $(this).change(customSelectChange);
+        var editor = new Quill('.quill-editor', options);
     
-    
-    
-        });
 
-    });
 
-    $(".custom-select").change(customSelectChange);
+    // handling form submit
 
-    $('#upload-btn').click(function(){
-        var data = getContents();
-        
-        $.post('/post/new-blog', data);
-    });
+    $('#upload-btn').click(
+        function(){
 
-    
-});
+                var contents = editor.getContents();
+                var title = $("#title").val();
+                editor.disable();
 
-function customSelectChange(){
-    var value = $(this).val();
-    console.log(value);
-    var requiredID = $(this).get(0).id;
-    requiredID = requiredID[requiredID.length - 1];
-    console.log("required ID is " + requiredID)
-    switch (value) {
-        case "subtitle":
-            {
-                var element = '<div class="input-group">' +
-                    '<div class="input-group-prepend">' +
-                    '<span class="input-group-text">Add subtitle</span>' +
-                    '</div>' +
-                    '<input type="text" id="text-' + requiredID + '" class="form-control" aria-label="subtitle" aria-describedby="basic-addon1">' +
-                    '</div>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "paragraph":
-            {
-                var element = '<div class="input-group">' +
-                    '<div class="input-group-prepend">' +
-                    '<span class="input-group-text">Add paragraph</span>' +
-                    '</div>' +
-                    '<textarea id="text-' + requiredID + '" class="form-control" aria-label="With textarea"></textarea>' +
-                    '</div>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "image":
-            {
-                var element = '<textarea id="text-' + requiredID + '" cols="30" rows="10"></textarea>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "video":
-            {
-                var element = '<div class="input-group">' +
-                    '<div class="input-group-prepend">' +
-                    '<span class="input-group-text">Video Url</span>' +
-                    '</div>' +
-                    '<input type="url" id="text-' + requiredID + '" class="form-control" aria-label="video" aria-describedby="basic-addon1">' +
-                    '</div>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "formula":
-            {
-                var element = '<textarea id="text-' + requiredID + '" cols="30" rows="10"></textarea>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "code":
-            {
-                var element = '<div class="input-group">' +
-                    '<div class="input-group-prepend">' +
-                    '<span class="input-group-text">Add Code</span>' +
-                    '</div>' +
-                    '<textarea id="text-' + requiredID + '" class="form-control" aria-label="code"></textarea>' +
-                    '</div>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-        case "quote":
-            {
-                var element = '<div class="input-group">' +
-                    '<div class="input-group-prepend">' +
-                    '<span class="input-group-text">Add Quote</span>' +
-                    '</div>' +
-                    '<textarea id="text-' + requiredID + '" class="form-control" aria-label="With textarea"></textarea>' +
-                    '</div>';
-                $('#content-body-' + requiredID).html(element);
-                break;
-            }
-    }
-}
+                var data = {
+                    title: title,
+                    body: JSON.stringify(contents)
+                };
 
-function getContents(){
-    var title = $("#title").val();
-    var body = {};
-    body.title = title;
-    var contents = document.getElementsByClassName("custom-select");
-    // var contentBody = document.getElementsByClassName("");
-    $(".content-box").each(function(index){
-        var contentType = $(this).find(".custom-select").get(0).value;
-        var contentBody = $(this).find(".form-control").get(0).value;
-        body[index] = {
-            type: contentType,
-            body: contentBody
-        };
-    });
-    console.log(body);
+                 $.post('/post/new-blog', data);
+                
+        }
+    );
 
-    return body;
-}
+   }
+);
